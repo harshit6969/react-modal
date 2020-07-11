@@ -1,10 +1,6 @@
-import React, { createContext, useContext, useEffect, createRef } from "react";
+import React, { useEffect, createRef } from "react";
 import { createPortal } from "react-dom";
-
-import { ReactComponent as Cross } from "./cross.svg";
 import "./index.css";
-
-const modalContext = createContext();
 
 export default function Modal({ children, onModalClose, isOpen }) {
   useEffect(() => {
@@ -19,21 +15,23 @@ export default function Modal({ children, onModalClose, isOpen }) {
 
   const modalRef = createRef();
   const handleTabKey = (e) => {
-    const focusableModalElements = modalRef.current.querySelectorAll(
-      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
-    );
-    const firstElement = focusableModalElements[0];
-    const lastElement =
-      focusableModalElements[focusableModalElements.length - 1];
+    if (isOpen) {
+      const focusableModalElements = modalRef.current.querySelectorAll(
+        'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+      );
+      const firstElement = focusableModalElements[0];
+      const lastElement =
+        focusableModalElements[focusableModalElements.length - 1];
 
-    if (!e.shiftKey && document.activeElement !== firstElement) {
-      firstElement.focus();
-      return e.preventDefault();
-    }
+      if (!e.shiftKey && document.activeElement !== firstElement) {
+        firstElement.focus();
+        return e.preventDefault();
+      }
 
-    if (e.shiftKey && document.activeElement !== lastElement) {
-      lastElement.focus();
-      e.preventDefault();
+      if (e.shiftKey && document.activeElement !== lastElement) {
+        lastElement.focus();
+        e.preventDefault();
+      }
     }
   };
 
@@ -45,9 +43,7 @@ export default function Modal({ children, onModalClose, isOpen }) {
     return createPortal(
       <div className="modal-container" role="dialog" aria-modal="true">
         <div className="modal-content" ref={modalRef}>
-          <modalContext.Provider value={{ onModalClose }}>
-            {children}
-          </modalContext.Provider>
+          {children}
         </div>
       </div>,
       document.body
@@ -55,36 +51,3 @@ export default function Modal({ children, onModalClose, isOpen }) {
   }
   return null;
 }
-
-Modal.Header = function ModalHeader(props) {
-  const { onModalClose } = useContext(modalContext);
-
-  return (
-    <div className="modal-header">
-      {props.children}
-      <button className="cross-btn" title="close modal" onClick={onModalClose}>
-        <Cross />
-      </button>
-    </div>
-  );
-};
-
-Modal.Body = function ModalBody(props) {
-  return <div className="modal-body">{props.children}</div>;
-};
-
-Modal.Footer = function ModalFooter(props) {
-  return <div className="modal-footer">{props.children}</div>;
-};
-
-Modal.Footer.CloseBtn = function CloseBtn(props) {
-  const { onModalClose } = useContext(modalContext);
-  return (
-    <button
-      {...props}
-      className="close-btn"
-      title="close modal"
-      onClick={onModalClose}
-    />
-  );
-};
