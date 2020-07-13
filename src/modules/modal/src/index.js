@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import "./index.css";
 import { useForkRef } from "../../common/useForkRef";
 import { useRef } from "react";
+import PropTypes from "prop-types";
 
 const FOCUSABLE_ELEMENTS = [
   "a[href]",
@@ -18,10 +19,20 @@ const FOCUSABLE_ELEMENTS = [
   '[tabindex]:not([tabindex^="-"])',
 ];
 
-const Modal = React.forwardRef((props, ref) => {
+const Modal = React.forwardRef(({ clickOutsideToClose, ...props }, ref) => {
+  const overlayRef = useRef(null);
   if (props.isOpen) {
     return createPortal(
-      <div className="modal-overlay">
+      <div
+        ref={overlayRef}
+        className="modal-overlay"
+        onClick={(e) => {
+          if (e.target === overlayRef.current && clickOutsideToClose) {
+            e.stopPropagation();
+            props.onClose();
+          }
+        }}
+      >
         <ModalContent ref={ref} {...props} />
       </div>,
       document.body
@@ -33,26 +44,16 @@ const Modal = React.forwardRef((props, ref) => {
 
 const ModalContent = React.forwardRef(
   (
-    {
-      onClose,
-      isOpen,
-      initialFocusRef,
-      closeTrigger = "",
-      className = "",
-      ...props
-    },
+    { onClose, isOpen, initialFocusRef, closeTrigger, className, ...props },
     ref
   ) => {
     const modalRef = useRef(null);
     const forkedRef = useForkRef(ref, modalRef);
 
     const getFocusableNodes = useCallback(() => {
-      if (modalRef.current) {
-        return Array(
-          ...modalRef.current.querySelectorAll(FOCUSABLE_ELEMENTS) // 1
-        );
-      }
-      return [];
+      return modalRef.current
+        ? Array(...modalRef.current.querySelectorAll(FOCUSABLE_ELEMENTS))
+        : [];
     }, [modalRef]);
 
     const setInitialFocus = () => {
@@ -76,11 +77,9 @@ const ModalContent = React.forwardRef(
 
     const handleTabKey = (e) => {
       if (isOpen) {
-        // 1. Querying all the focusable nodes from the modal
-        // 2. Filtering out the focusable nodes that are display:none
         const focusableNodes = getFocusableNodes().filter(
           (node) => node.offsetParent !== null
-        ); // 2
+        );
 
         if (!focusableNodes.length) {
           return;
@@ -101,13 +100,13 @@ const ModalContent = React.forwardRef(
       }
     };
 
-    const keyListenersMap = new Map([
-      [27, onClose],
-      [9, handleTabKey],
-    ]);
-
     useEffect(
       () => {
+        const keyListenersMap = new Map([
+          [27, onClose],
+          [9, handleTabKey],
+        ]);
+
         function keyListener(e) {
           const listener = keyListenersMap.get(e.keyCode);
           return listener && listener(e);
@@ -136,3 +135,31 @@ const ModalContent = React.forwardRef(
 );
 
 export { Modal };
+
+Modal.propTypes = {
+  // To govern, if the modal should close when overlay is clicked
+  clickOutsideToClose: PropTypes.bool,
+
+  // To close the modal, since its being controlled from outside
+  onClose: PropTypes.func.isRequired,
+
+  // To govern the open/close state of the modal
+  isOpen: PropTypes.bool,
+
+  // Ref of the element that should be autofocus when the modal opens
+  // If nothing is provided, first tab-able element will be focused
+  initialFocusRef: PropTypes.object,
+
+  // data attr of close button/icon to avoid it being the first focusable element
+  closeTrigger: PropTypes.string,
+
+  // Custom className for the modal container
+  className: PropTypes.string,
+};
+
+Modal.defaultProps = {
+  clickOutsideToClose: false,
+  isOpen: false,
+  closeTrigger: "",
+  className: "",
+};
