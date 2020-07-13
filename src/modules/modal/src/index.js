@@ -32,7 +32,17 @@ const Modal = React.forwardRef((props, ref) => {
 });
 
 const ModalContent = React.forwardRef(
-  ({ onClose, isOpen, initialFocusRef, className = "", ...props }, ref) => {
+  (
+    {
+      onClose,
+      isOpen,
+      initialFocusRef,
+      closeTrigger = "",
+      className = "",
+      ...props
+    },
+    ref
+  ) => {
     const modalRef = useRef(null);
     const forkedRef = useForkRef(ref, modalRef);
 
@@ -56,7 +66,12 @@ const ModalContent = React.forwardRef(
         return;
       }
 
-      focusableNodes[0].focus();
+      const firstFocusableNode = focusableNodes.find(
+        (node) => !node.hasAttribute(closeTrigger)
+      );
+      if (firstFocusableNode) {
+        firstFocusableNode.focus();
+      }
     };
 
     const handleTabKey = (e) => {

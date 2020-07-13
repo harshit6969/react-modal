@@ -11,7 +11,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Dashboard</h1>
         <img src={logo} className="App-logo" alt="logo" />
         <div className="horizontal-stack">
           <button
@@ -26,13 +25,16 @@ function App() {
           onClose={() => setLoginModalVisibility(false)}
           isOpen={isLoginModalVisible}
           style={{ width: "40%" }}
+          aria-label="Login"
+          closeTrigger="data-accessible-modal-close"
         >
           <div className="modal-header">
-            Header
+            <h2>Login</h2>
             <button
               className="cross-btn"
               title="close modal"
               onClick={() => setLoginModalVisibility(false)}
+              data-accessible-modal-close=""
             >
               <Cross />
             </button>
@@ -62,10 +64,7 @@ function App() {
 
           <div className="modal-footer">
             <Link to="dashboard">Login</Link>
-            <button
-              className="close-btn"
-              onClick={() => setLoginModalVisibility(false)}
-            >
+            <button onClick={() => setLoginModalVisibility(false)}>
               Close
             </button>
           </div>
@@ -74,13 +73,16 @@ function App() {
           onClose={() => setSignupModalVisibility(false)}
           isOpen={isSignupModalVisible}
           style={{ width: "40%" }}
+          aria-label="Signup"
+          closeTrigger="data-accessible-modal-close"
         >
           <div className="modal-header">
-            Header
+            <h2>Signup</h2>
             <button
               className="cross-btn"
               title="close modal"
               onClick={() => setSignupModalVisibility(false)}
+              data-accessible-modal-close=""
             >
               <Cross />
             </button>
@@ -142,10 +144,7 @@ function App() {
           </div>
           <div className="modal-footer">
             <Link to="dashboard">Signup</Link>
-            <button
-              className="close-btn"
-              onClick={() => setSignupModalVisibility(false)}
-            >
+            <button onClick={() => setSignupModalVisibility(false)}>
               Close
             </button>
           </div>
