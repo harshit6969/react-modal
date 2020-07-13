@@ -27,6 +27,7 @@ function App() {
         <Modal
           onClose={() => setLoginModalVisibility(false)}
           isOpen={isLoginModalVisible}
+          style={{ width: "40%" }}
         >
           <div className="modal-header">
             Header
