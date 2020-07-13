@@ -83,3 +83,11 @@
   border-color: rgb(43, 123, 255);
   cursor: pointer;
 }
+
+/* CSS */
+.horizontal-stack {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

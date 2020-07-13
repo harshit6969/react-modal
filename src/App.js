@@ -11,19 +11,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>Dashboard</h1>
         <img src={logo} className="App-logo" alt="logo" />
-        <button
-          className="App-link"
-          onClick={() => setLoginModalVisibility(true)}
-        >
-          Login
-        </button>
-        <button
-          className="App-link"
-          onClick={() => setSignupModalVisibility(true)}
-        >
-          Signup
-        </button>
+        <div className="horizontal-stack">
+          <button
+            style={{ marginRight: 10 }}
+            onClick={() => setLoginModalVisibility(true)}
+          >
+            Login
+          </button>
+          <button onClick={() => setSignupModalVisibility(true)}>Signup</button>
+        </div>
         <Modal
           onClose={() => setLoginModalVisibility(false)}
           isOpen={isLoginModalVisible}
@@ -73,8 +71,9 @@ function App() {
           </div>
         </Modal>
         <Modal
-          onModalClose={() => setSignupModalVisibility(false)}
+          onClose={() => setSignupModalVisibility(false)}
           isOpen={isSignupModalVisible}
+          style={{ width: "40%" }}
         >
           <div className="modal-header">
             Header
