@@ -75,6 +75,27 @@ const ModalContent = React.forwardRef(
       }
     };
 
+    const scrollBehaviour = (toggle) => {
+      const body = document.querySelector("body");
+      switch (toggle) {
+        case "enable":
+          Object.assign(body.style, { overflow: "" });
+          break;
+        case "disable":
+          Object.assign(body.style, { overflow: "hidden" });
+          break;
+        default:
+      }
+    };
+
+    useEffect(() => {
+      if (isOpen) {
+        scrollBehaviour("disable");
+      } else {
+        scrollBehaviour("enable");
+      }
+    }, [isOpen]);
+
     const handleTabKey = (e) => {
       if (isOpen) {
         const focusableNodes = getFocusableNodes().filter(
