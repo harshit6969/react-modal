@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import logo from "./logo.svg";
 import { ReactComponent as Cross } from "./cross.svg";
 import "./App.css";
-import Modal from "./components/Modal";
+import { Modal } from "./modules/modal/index";
 import { Link } from "@reach/router";
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
           Signup
         </button>
         <Modal
-          onModalClose={() => setLoginModalVisibility(false)}
+          onClose={() => setLoginModalVisibility(false)}
           isOpen={isLoginModalVisible}
         >
           <div className="modal-header">
